@@ -1,0 +1,69 @@
+<div [class.debug-mode]="areLinesVisible">
+    <bmap-maps [floors]="floors"
+                [filterText]="filterText"
+                (mapClick)="tryAddVertex($event.offsetX, $event.offsetY)"
+                [(selectedFloor)]="selectedFloor"
+                [(hoveredRoom)]="hoveredRoom"
+                (removedRoom)="removeRoom($event)"
+                class="bmap-maps"></bmap-maps>
+    <div class="panels">
+        <section class="panel rooms">
+            <header>Rooms</header>
+            <bmap-textBox [(text)]="filterText">filter</bmap-textBox>
+            <div *ngFor="let floor of floors"
+                 class="rooms-container">
+                 {{floor.name}}
+                <div *ngFor="let room of floor.rooms | roomsFilter: filterText"
+                    class="room-item"
+                    (mouseenter)="selectFloorByRoom(room); hoverRoom(room);"
+                    (mouseleave)="dehoverRoom(room)"
+                    [class.hover]="room === floor.hoveredRoom"
+                    [class.selected]="room === floor.selectedRoom">
+                    <div class="rooms-head">
+                        <bmap-textBox [(text)]="room.name">
+                            Room name
+                        </bmap-textBox>
+                        <bmap-button (click)="removeRoom(room)"
+                                    icon="delete"
+                                    iconAlign="center"
+                                    color="red"
+                                    floating="true">
+                        </bmap-button>
+                    </div>
+                    <ul>
+                        <li *ngFor="let person of room.people"
+                            bmap-staggeredList>
+                            <bmap-button (click)="removePerson(room, person)"
+                                            icon="delete"
+                                            iconAlign="center"
+                                            color="red"
+                                            floating="true">
+                            </bmap-button>
+                            <p>{{person.name}}</p>
+                        </li>
+                    </ul>
+                    <bmap-textBox [(text)]="room.tempPersonName"
+                                  (focusout)="addPerson(room, room.tempPersonName)"
+                                  (onEnter)="addPerson(room, room.tempPersonName)"
+                                  data-label="Add Person">
+                    </bmap-textBox>
+                </div>
+            </div>
+        </section>
+        <section class="panel admin">
+            <header>Admin</header>
+            <bmap-textBox [(text)]="defaultName">Name</bmap-textBox>
+            <bmap-button (click)="isDrawing ? stopDrawVertex() : startDrawVertex()">
+                {{isDrawing ? "stop" : "start"}}
+            </bmap-button>
+            <div>
+                <bmap-switch [(isChecked)]="areLinesVisible">show lines</bmap-switch>
+            </div>
+            <div>
+                <textarea>
+                    {{getJSON()}}
+                </textarea>
+            </div>
+        </section>
+    </div>
+</div>

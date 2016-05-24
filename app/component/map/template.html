@@ -1,0 +1,34 @@
+<div class="bmap-map"
+     tabindex="-1"
+     (click)="tryClearSelection()">
+<svg [style.width.px]="width"
+        [style.height.px]="height">
+    <image [attr.href]="imgsrc"
+            [style.width.px]="width"
+            [style.height.px]="height"></image>
+    <g *ngFor="let room of rooms"
+        [class.dragging]="room === draggingRoom"
+        [class.selected]="room === selection"
+        [class.hover]="room === hovered"
+        (mouseenter)="hover(room)"
+        (mouseleave)="dehover(room)"
+        (click)="select(room)">
+        <polyline [attr.points]="getPolylinePoints(room)"
+                    bmap-draggable
+                    (start)="draggingRoom = room"
+                    (end)="draggingRoom = null"
+                    (move)="moveRoom($event.delta, room)"></polyline>
+        <circle *ngFor="let point of room.points"
+                [attr.cx]="point.x"
+                [attr.cy]="point.y"
+                bmap-draggable
+                (start)="draggingRoom = room"
+                (end)="draggingRoom = null"
+                (move)="updatePoint($event.offset, point, room)"></circle>
+        <text [attr.x]="room.points[0] && room.points[0].x"
+                [attr.y]="room.points[0] && room.points[0].y">
+                {{room.name}}
+        </text>
+    </g>
+</svg>
+</div>

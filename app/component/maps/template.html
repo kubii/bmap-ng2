@@ -1,0 +1,26 @@
+<div class="row"
+     bmap-tabs>
+    <div class="col s12">
+        <ul class="tabs">
+            <li *ngFor="let floor of floors; let index = index"
+                class="tab col s3"
+                #tabItem>
+                <a [attr.href]="'#' + tabId + index"
+                    (click)="emitSelectFloor(floor)">{{floor.name}}</a>
+            </li>
+        </ul>
+    </div>
+    <div *ngFor="let floor of floors; let index = index"
+            [attr.id]="tabId + index"
+            class="col s12">
+        <bmap-map [rooms]="floor.rooms | roomsFilter: filterText"
+                [width]="floor.width"
+                [height]="floor.height"
+                [imgsrc]="floor.img"
+                [(selection)]="floor.selectedRoom"
+                [(hovered)]="floor.hoveredRoom"
+                (click)="triggerMapClick($event)"
+                (removedRoom)="removedRoom.emit($event)"
+                class="bmap-map"></bmap-map>
+    </div>
+</div>
